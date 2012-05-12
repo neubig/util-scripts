@@ -1,0 +1,53 @@
+#!/usr/bin/perl
+
+use strict;
+use utf8;
+use List::Util qw(max min);
+push @INC, "/home/neubig/usr/bin";
+require "levenshtein.pl";
+
+binmode STDIN, ":utf8";
+binmode STDOUT, ":utf8";
+
+if(@ARGV != 2) {
+    print STDERR "Usage: counterrors.pl REFERENCE SYSTEM\n";
+    exit;
+}
+
+# find which of the inputs are in error
+open REF, "<:utf8", $ARGV[0] or die $!;
+open TEST,    "<:utf8", $ARGV[1] or die $!;
+my ($ref, $test, @refs, @tests, %errs, @hists);
+while($ref = <REF> and $test = <TEST>) {
+    chomp $ref; chomp $test;
+    my ($hist, $score) = levenshtein($ref, $test);
+    @refs = split(/ +/, $ref);
+    @tests = split(/ +/, $test);
+    @hists = split(//, $hist);
+    my (@rerr, @terr);
+    while(@hists) {
+        my $h = shift(@hists);
+        if($h eq 'e') {
+            if(@rerr+@terr) {
+                my $err = (@rerr?join(' ',@rerr):"NULL")."\t".(@terr?join(' ',@terr):"NULL");
+                $errs{$err}++;
+                @rerr = ();
+                @terr = ();
+            }
+            shift @refs; shift @tests;
+        } else {
+            push @rerr, shift(@refs) if $h ne 'i';
+            push @terr, shift(@tests) if $h ne 'd';
+        }
+    }
+    if(@rerr+@terr) {
+        my $err = (@rerr?join(' ',@rerr):"NULL")."\t".(@terr?join(' ',@terr):"NULL");
+        $errs{$err}++;
+    }
+}
+close REF;
+close TEST;
+
+for(sort { $errs{$b} <=> $errs{$a} } keys %errs) {
+    print "$_\t$errs{$_}\n";
+}
