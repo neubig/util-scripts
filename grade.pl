@@ -1,15 +1,22 @@
 #!/usr/bin/perl
 
+binmode STDIN, ":utf8";
+binmode STDOUT, ":utf8";
+binmode STDERR, ":utf8";
+
+use utf8;
 use strict;
 push @INC, "/home/neubig/usr/bin";
 require "levenshtein.pl";
 use List::Util qw(max min);
 
+my $PRINT_INLINE = 1;
+
 sub width {
     $_ = shift;
     my $ret = 0;
     for(split(//)) {
-        $ret += ((/[０-９]/ or /\p{InKatakana}/ or /\p{InHiragana}/ or /\p{InCJKSymbolsAndPunctuation}/ or /\p{InKatakanaPhoneticExtensions}/ or /\p{InCJKUnifiedIdeographs}/)?2:1);
+        $ret += ((/\p{InKatakana}/ or /\p{InHiragana}/ or /\p{InCJKSymbolsAndPunctuation}/ or /\p{InKatakanaPhoneticExtensions}/ or /\p{InCJKUnifiedIdeographs}/)?2:1);
     }
     return $ret;
 }
@@ -30,11 +37,13 @@ my($ref, $test, $sent, $sentacc);
 while($ref = <REF> and $test = <TEST>) {
     chomp $ref;
     chomp $test;
-    
+    $ref =~ s/^ *//g; $ref =~ s/ *$//g;
+    $test =~ s/^ *//g; $test =~ s/ *$//g;
+
     # get the arrays
-    my @ra = split(/ /, $ref);
+    my @ra = split(/ +/, $ref);
     $reflen += @ra;
-    my @ta = split(/ /, $test);
+    my @ta = split(/ +/, $test);
     $testlen += @ta;
 
     # do levenshtein distance if the scores aren't equal
@@ -50,26 +59,51 @@ while($ref = <REF> and $test = <TEST>) {
 
     my @ha = split(//, $hist);
     my ($rd, $td, $hd, $h, $r, $t, $l);
-    while(@ha) {
-        $h = shift(@ha);
-        $scores{$h}++;
-        if($h eq 'e' or $h eq 's') {
-            $r = shift(@ra);
-            $t = shift(@ta);
-        } elsif ($h eq 'i') {
-            $r = '';
-            $t = shift(@ta);
-        } elsif ($h eq 'd') {
-            $r = shift(@ra);
-            $t = '';
-        } else { die "bad history value $h"; }
-        # find the length
-        $l = max(width($r), width($t)) + 1;
-        $rd .= pad($r, $l);
-        $td .= pad($t, $l);
-        $hd .= pad($h, $l);
+    if(not $PRINT_INLINE) {
+        while(@ha) {
+            $h = shift(@ha);
+            $scores{$h}++;
+            if($h eq 'e' or $h eq 's') {
+                $r = shift(@ra);
+                $t = shift(@ta);
+            } elsif ($h eq 'i') {
+                $r = '';
+                $t = shift(@ta);
+            } elsif ($h eq 'd') {
+                $r = shift(@ra);
+                $t = '';
+            } else { die "bad history value $h"; }
+            # find the length
+            $l = max(width($r), width($t)) + 1;
+            $rd .= pad($r, $l);
+            $td .= pad($t, $l);
+            $hd .= pad($h, $l);
+        }
+        print "$rd\n$td\n$hd\n\n";
+    } else {
+        my (@er, @et, @dr, @dt);
+        while(@ha) {
+            $h = shift(@ha);
+            $scores{$h}++;
+            if($h eq 'e') {
+                if(@dr or @dt) {
+                    print "X\t@dr\t@dt\n"; @dr = (); @dt = ();
+                }
+                push @er, shift(@ra);
+                push @et, shift(@ta);
+            } else {
+                if(@er or @et) {
+                    die "@er != @et" if("@er" ne "@et");
+                    print "O\t@er\t@et\n"; @er = (); @et = ();
+                }
+                push @dr, shift(@ra) if $h ne 'i';
+                push @dt, shift(@ta) if $h ne 'd';
+            }
+        }
+        if(@dr or @dt) { print "X\t@dr\t@dt\n\n"; }
+        elsif(@er or @et) { print "O\t@er\t@et\n\n"; }
     }
-    print "$rd\n$td\n$hd\n\n";
+    die "non-empty ra=@ra or ta=@ta\n" if(@ra or @ta);
 }
 
 my $total = 0;
