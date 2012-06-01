@@ -1,10 +1,13 @@
 #!/usr/bin/perl
 
+# This is a script to count errors (insertions, deletions, substitutions)
+# according to edit distance
+
 use strict;
 use utf8;
 use List::Util qw(max min);
-push @INC, "/home/neubig/usr/bin";
-require "levenshtein.pl";
+use Cwd qw(cwd);
+require ("".cwd()."/levenshtein.pl");
 
 binmode STDIN, ":utf8";
 binmode STDOUT, ":utf8";

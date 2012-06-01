@@ -1,5 +1,19 @@
 #!/usr/bin/perl
 
+# This is a script to tabulate the errors made by two systems
+#  In order to use it first run counterrors.pl on two different system outputs
+#
+# $ counterrors.pl ref.txt test-1.txt > test-1.err
+# $ counterrors.pl ref.txt test-2.txt > test-2.err
+# 
+# Next, run this script on the error files to get the output
+#
+# $ error-diff.pl test-1.err test-2.err > test-diff.err
+#
+# test-diff.err will now contain error examples along with frequencies.
+# examples with positive frequencies are more common in the first file,
+# while examples with negative frequencies are more common in the second file.
+
 use strict;
 use utf8;
 binmode STDIN, ":utf8";

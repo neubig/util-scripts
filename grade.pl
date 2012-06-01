@@ -1,14 +1,16 @@
 #!/usr/bin/perl
 
+# This is a script to grade word error rates according to edit distance
+
 binmode STDIN, ":utf8";
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
 
 use utf8;
 use strict;
-push @INC, "/home/neubig/usr/bin";
-require "levenshtein.pl";
 use List::Util qw(max min);
+use Cwd qw(cwd);
+require ("".cwd()."/levenshtein.pl");
 
 my $PRINT_INLINE = 1;
 
