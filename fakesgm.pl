@@ -19,7 +19,7 @@ print "<".$ARGV[0]."set setid=\"test2006\" srclang=\"any\" trglang=\"$ARGV[1]\">
 my $sent = 1;
 while(<STDIN>) {
     chomp;
-    print "<seg id=".$sent++."> $_ </seg>\n";
+    print "<seg id=\"".$sent++."\"> $_ </seg>\n";
 }
 
 print "</DOC>\n</".$ARGV[0]."set>\n";
