@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+$| = 1;
+
 use strict;
 use utf8;
 use FileHandle;
