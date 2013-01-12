@@ -15,7 +15,6 @@ if(@ARGV != 0) {
 
 sub iscombine {
     my $s = shift;
-    print "$s\n";
     my ($word, $pos, $pron) = split(/\//, $s);
     if($pos =~ /^(語尾|助動詞)$/) {
         return 1;
