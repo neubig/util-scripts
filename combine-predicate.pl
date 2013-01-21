@@ -13,9 +13,12 @@ if(@ARGV != 0) {
     exit 1;
 }
 
+my $GLUE = "<_>";
+
 sub iscombine {
     my $s = shift;
-    my ($word, $pos, $pron) = split(/\//, $s);
+    $s =~ /(.+)\/([^\/]+)\/([^\/]+)/ or die $s;
+    my ($word, $pos, $pron) = ($1, $2, $3);
     if($pos =~ /^(語尾|助動詞)$/) {
         return 1;
     } elsif(($word =~ /^(て)$/) and ($pos =~ /^(助詞)$/)) {
@@ -34,7 +37,7 @@ while(<STDIN>) {
     my @newarr = ($harr[0]);
     foreach my $i (1 .. $#warr) {
         if(($carr[$i] == 1) and ($carr[$i-1] == 1)) {
-            $newarr[-1] .= $harr[$i];
+            $newarr[-1] .= $GLUE . $harr[$i];
         } else {
             push @newarr, $harr[$i];
         }
