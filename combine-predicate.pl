@@ -18,9 +18,11 @@ sub iscombine {
     my ($word, $pos, $pron) = split(/\//, $s);
     if($pos =~ /^(語尾|助動詞)$/) {
         return 1;
-    } elsif(($word =~ /^(て)$/) and ($pos =~ /^(助詞)$/)) {
+    } elsif(($word =~ /^(て|ば)$/) and ($pos =~ /^(助詞)$/)) {
         return 1;
-    } elsif(($word =~ /^(し|す|あ|い|な)$/) and ($pos =~ /^(動詞)$/)) {
+    } elsif(($word =~ /^(な)$/) and ($pos =~ /^(形容詞)$/)) {
+        return 1;
+    } elsif(($word =~ /^(し|す|あ|い)$/) and ($pos =~ /^(動詞)$/)) {
         return 1;
     }
     return 0;
