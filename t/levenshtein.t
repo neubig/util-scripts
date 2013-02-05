@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Test::Simple tests => 1;
 
-require 'levenshtein.pl';
+use Levenshtein;
 
 # TODO: Write tests about levenshtein().
 # this is a dummy test.
