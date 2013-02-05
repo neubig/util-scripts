@@ -65,7 +65,6 @@ sub wpp {
 sub iscombine {
     my $s = shift;
     my ($word, $pos, $pron) = wpp($s);
-    print "word=$word\tpos=$pos\tpron=$pron\n";
     if($pos =~ /^(語尾|助動詞)$/) {
         return 1;
     } elsif(($word =~ /^(て|ば)$/) and ($pos =~ /^(助詞)$/)) {
@@ -92,7 +91,6 @@ sub iscombine {
 # "である".
 sub combine {
   my ($harr, $carr) = @_;
-  print "@$harr @$carr\n";
   my @newarr = ($$harr[0]);
   foreach my $i (1 .. $#$harr) {
     if (($$carr[$i] == 1) and ($$carr[$i-1] == 1)) {
