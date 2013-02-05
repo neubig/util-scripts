@@ -11,7 +11,7 @@
 # Usage and Data Format
 # ---------------------
 #
-# Currently, we are assuming the input format is sequnces of triplets of (word, the
+# Currently, we are assuming the input format is sequences of triplets of (word, the
 # part-of-speech, and the reading of the word). Each triplet should be delimitted by
 # slash "/".
 #
