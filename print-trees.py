@@ -1,12 +1,23 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
-from nltk.tree import Tree
+'''A program to display parse trees (in Penn treebank format)
+with the NLTK.
+'''
+
 import sys
 
-# A program to display parse trees (in Penn treebank format) with NLTK
-#
-#  To install NLTK on ubuntu: sudo apt-get install python-nltk
+try:
+  from nltk.tree import Tree
+except ImportError:
+  print 'Error: cannot import the NLTK!'
+  print 'You need to install the NLTK. Please visit http://nltk.org/install.html for details.'
+  print "On Ubuntu, the installation can be done via 'sudo apt-get install python-nltk'"
+  sys.exit()
 
-for line in sys.stdin:
+def main():
+  for line in sys.stdin:
     t = Tree.parse(line)
     t.draw()
+
+if __name__ == '__main__':
+  main()
