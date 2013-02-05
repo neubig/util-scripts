@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+# TODO: Write breif documentation about what this script do.
+# Also, describe the input/output data format.
+
 use strict;
 use warnings;
 
@@ -21,6 +24,7 @@ sub wpp {
     return ($1, $2, $3);
 }
 
+# TODO: Write the documentation about used heuristic rules.
 sub iscombine {
     my $s = shift;
     my ($word, $pos, $pron) = wpp($s);
