@@ -78,18 +78,36 @@ sub iscombine {
     return 0;
 }
 
+# Combine predicates, and return the sequence of words.
+#
+# If there are consecutive words that fire the bits,
+# they will be combined into a single word.
+#
+# For example,
+# $harr = ["これ", "は", "ペン", "で", "あ", "る"]
+# $carr = [0, 0, 0, 1, 1, 1]
+# => ["これ", "は", "ペン", "である"]
+#
+# Note that the words ["で", "あ", "る"] were merged into
+# "である".
+sub combine {
+  my ($harr, $carr) = @_;
+  print "@$harr @$carr\n";
+  my @newarr = ($$harr[0]);
+  foreach my $i (1 .. $#$harr) {
+    if (($$carr[$i] == 1) and ($$carr[$i-1] == 1)) {
+      $newarr[-1] .= $GLUE . $$harr[$i];
+    } else {
+      push @newarr, $$harr[$i];
+    }
+  }
+  return \@newarr;
+}
+
 while(<STDIN>) {
     chomp;
     my @warr = split(/ /);
     my @harr = map { my ($w, $pr, $ps) = wpp($_); $w } @warr;
     my @carr = map { iscombine($_) } @warr;
-    my @newarr = ($harr[0]);
-    foreach my $i (1 .. $#warr) {
-        if(($carr[$i] == 1) and ($carr[$i-1] == 1)) {
-            $newarr[-1] .= $GLUE . $harr[$i];
-        } else {
-            push @newarr, $harr[$i];
-        }
-    }
-    print "@newarr\n";
+    print "@{combine(\@harr, \@carr)}\n";
 }
