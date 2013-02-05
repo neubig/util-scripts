@@ -1,9 +1,10 @@
+package Levenshtein;
 use strict;
-use warnings;
+use Carp;
 
 # return a minimum edit distance path with the following notation, plus cost
 #  d=delete i=insert s=substitute e=equal
-sub levenshtein {
+sub distance {
     my ($s, $t) = @_;
     my (@sc, $m, @tc, $n, %d, %str, $i, $j, $id, $cost, $type, $aid, $bid, $cid, $c);
     @sc = split(/ +/, $s);
@@ -55,4 +56,4 @@ sub levenshtein {
     return ($str{$id}, $d{$id});
 }
 
-1
+1;

@@ -11,7 +11,8 @@ use strict;
 use warnings;
 use List::Util qw(max min);
 use Cwd qw(cwd);
-require ("".cwd()."/levenshtein.pl");
+
+use Levenshtein;
 
 my $PRINT_INLINE = 1;
 
@@ -56,7 +57,7 @@ while($ref = <REF> and $test = <TEST>) {
         for (@ra) { $hist .= 'e'; }
         $score = 0;
     } else {
-        ($hist, $score) = levenshtein($ref, $test);
+        ($hist, $score) = Levenshtein::distance($ref, $test);
     }
     $sent++;
 
