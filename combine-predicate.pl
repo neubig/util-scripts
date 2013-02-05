@@ -24,7 +24,6 @@ sub wpp {
 sub iscombine {
     my $s = shift;
     my ($word, $pos, $pron) = wpp($s);
-    print "word=$word\tpos=$pos\tpron=$pron\n";
     if($pos =~ /^(語尾|助動詞)$/) {
         return 1;
     } elsif(($word =~ /^(て)$/) and ($pos =~ /^(助詞)$/)) {
