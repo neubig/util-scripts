@@ -8,6 +8,7 @@ binmode STDERR, ":utf8";
 
 use utf8;
 use strict;
+use warnings;
 use List::Util qw(max min);
 use Cwd qw(cwd);
 require ("".cwd()."/levenshtein.pl");
@@ -119,4 +120,3 @@ my $rec = $scores{'e'}/$reflen*100;
 my $fmeas = (2*$prec*$rec)/($prec+$rec);
 $sentacc = $sentacc/$sent*100;
 printf ("WER: %.2f%%\nPrec: %.2f%%\nRec: %.2f%%\nF-meas: %.2f%%\nSent: %.2f%%\n", $wer, $prec, $rec, $fmeas, $sentacc);
-

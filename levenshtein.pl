@@ -1,4 +1,5 @@
-#!/usr/bin/perl
+use strict;
+use warnings;
 
 # return a minimum edit distance path with the following notation, plus cost
 #  d=delete i=insert s=substitute e=equal
