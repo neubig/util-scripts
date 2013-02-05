@@ -11,12 +11,13 @@ binmode STDIN, ":utf8";
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
 
-if(@ARGV > 1) {
+my $GLUE = "";
+if (@ARGV eq 1) {
+    $GLUE = $ARGV[0];
+} elsif (@ARGV > 1) {
     print STDERR "Usage: $0 [GLUE]\n";
     exit 1;
 }
-
-my $GLUE = $ARGV[0];
 
 sub wpp {
     my $s = shift;
