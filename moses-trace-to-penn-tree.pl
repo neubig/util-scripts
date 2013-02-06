@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+use warnings;
 use utf8;
 use Getopt::Long;
 use List::Util qw(sum min max shuffle);
@@ -29,7 +30,7 @@ sub span2josh {
 sub print_tree {
     my ($tree, $span) = @_;
     my $val = $tree->{$span};
-    $val =~ /^((\[\d+\.\.\d+\]=\S* +)+): ([A-Z]+) ->(.*):((\d+-\d+ )*): pC=/ or die "bad $val\n"; 
+    $val =~ /^((\[\d+\.\.\d+\]=\S* +)+): ([A-Z]+) ->(.*):((\d+-\d+ )*): pC=/ or die "bad $val\n";
     my ($tags, $head, $tails, $correspond) = ($1, $3, $4, $5);
     $tails =~ s/ +$//g; $correspond =~ s/ +$//g;
     my @spans = reverse map { my @arr = split(/=/); $arr[0] } split(/ +/, $tags);

@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 
 use strict;
+use warnings;
+
 use utf8;
 use FileHandle;
 use List::Util qw(sum min max shuffle);

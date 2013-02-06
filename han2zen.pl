@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+use warnings;
 use utf8;
 use List::Util qw(sum min max shuffle);
 use Getopt::Long;

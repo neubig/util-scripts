@@ -1,11 +1,13 @@
 #!/usr/bin/perl
 
 use strict;
+use warnings;
+
 use utf8;
 use Getopt::Long;
 use List::Util qw(sum min max shuffle);
-use FindBin qw($Bin);
-require ("$Bin/levenshtein.pl");
+use Cwd qw(cwd);
+use Levenshtein;
 binmode STDIN, ":utf8";
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
@@ -57,7 +59,7 @@ sub map_en {
     my ($in, $out) = @_;
     $in = normalize_en($in);
     $out = normalize_en($out);
-    my ($hist, $score) = levenshtein($in, $out);
+    my ($hist, $score) = Levenshtein::distance($in, $out);
     my @hists = split(//, $hist);
     my (@ierr, @oerr);
     my ($ipos, $opos) = (0, 0);
@@ -108,7 +110,7 @@ sub combine_map {
 while(($jo = <FILE0>) and ($eo = <FILE1>) and ($al = <FILE2>) and ($jn = <FILE3>) and ($en = <FILE4>)) {
     chomp $jo; chomp $eo; chomp $al; chomp $jn; chomp $en;
     my %em = map_en($eo, $en);
-    my %jm = map_ja($jn, $jo); 
+    my %jm = map_ja($jn, $jo);
     my %am;
     for(split(/ /, $al)) {
         my ($ja, $ea) = split(/-/);

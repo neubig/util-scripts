@@ -15,6 +15,7 @@
 # while examples with negative frequencies are more common in the second file.
 
 use strict;
+use warnings;
 use utf8;
 binmode STDIN, ":utf8";
 binmode STDOUT, ":utf8";

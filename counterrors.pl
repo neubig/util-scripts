@@ -4,10 +4,11 @@
 # according to edit distance
 
 use strict;
+use warnings;
 use utf8;
 use List::Util qw(max min);
-use Cwd qw(cwd);
-require ("".cwd()."/levenshtein.pl");
+
+use Levenshtein;
 
 binmode STDIN, ":utf8";
 binmode STDOUT, ":utf8";
@@ -23,7 +24,7 @@ open TEST,    "<:utf8", $ARGV[1] or die $!;
 my ($ref, $test, @refs, @tests, %errs, @hists);
 while($ref = <REF> and $test = <TEST>) {
     chomp $ref; chomp $test;
-    my ($hist, $score) = levenshtein($ref, $test);
+    my ($hist, $score) = Levenshtein::distance($ref, $test);
     @refs = split(/ +/, $ref);
     @tests = split(/ +/, $test);
     @hists = split(//, $hist);
