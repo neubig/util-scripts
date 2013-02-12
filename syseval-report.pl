@@ -1,5 +1,23 @@
 #!/usr/bin/perl
 
+#
+# What's this?
+# ------------
+#
+# Given a CSV-format manual evaluation file created by syseval-combine.pl,
+# this script restores the orders of the systems and calculates an average
+# score for each system.
+#
+# Usage and Data Format
+# ---------------------
+#
+# syseval-report.pl finished-eval.csv output.ids
+#
+# Where finished-eval is a completely filled in manual evaluation CSV file
+# and output.ids is the ID file output by syseval-combine.pl
+#
+# TODO: Add significance tests to the report
+
 use strict;
 use warnings;
 use utf8;
@@ -23,8 +41,11 @@ if(@ARGV != 2) {
 open FILE0, "<:utf8", $ARGV[0] or die "Couldn't open $ARGV[0]\n";
 open FILE1, "<:utf8", $ARGV[1] or die "Couldn't open $ARGV[1]\n";
 
-my ($stsv, $sids, $lines, @scores, @tsvs, @vals, @refs);
+my ($stsv, $sids, $lines, @scores, @tsvs, @vals, @refs, $header);
 while(($stsv = <FILE0>) and ($sids = <FILE1>)) {
+    if((not $header) and ($stsv =~ /^(Source|Reference)\t/)) {
+        $header = 1; $stsv = <FILE0>;
+    }
     ++$lines;
     last if ($LINES != -1) and ($lines > $LINES);
     chomp $stsv; chomp $sids;
