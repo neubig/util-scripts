@@ -13,7 +13,7 @@
 #
 # syseval-combine.pl               \
 #            -src test.src         \
-#            -trg test.trg         \
+#            -ref test.trg         \
 #            -ids output.ids       \
 #            -min 1                \
 #            -max 30               \
