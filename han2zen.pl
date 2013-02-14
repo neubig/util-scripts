@@ -9,6 +9,11 @@ binmode STDIN, ":utf8";
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
 
+my $NOHYPHEN = 0;
+GetOptions(
+    "nohyphen" => \$NOHYPHEN,
+);
+
 if(@ARGV != 0) {
     print STDERR "Usage: han2zen.pl < INPUT > OUTPUT\n";
     exit 1;
@@ -16,7 +21,7 @@ if(@ARGV != 0) {
 
 while(<STDIN>) {
     tr/a-zA-Z0-9()[]{}<> .,_%｢｣､"?･+:｡!&*/ａ-ｚＡ-Ｚ０-９（）［］｛｝＜＞　．，＿％「」、”？・＋：。！＆＊/;
-    s/-/－/g;
+    s/-/－/g if not $NOHYPHEN;
     s/\//／/g;
     print $_;
 }
