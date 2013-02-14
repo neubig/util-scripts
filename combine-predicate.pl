@@ -71,7 +71,7 @@ sub iscombine {
         return 1;
     } elsif(($word =~ /^(な)$/) and ($pos =~ /^(形容詞)$/)) {
         return 1;
-    } elsif(($word =~ /^(し|す|あ|い)$/) and ($pos =~ /^(動詞)$/)) {
+    } elsif(($word =~ /^(さ|し|す|あ|い)$/) and ($pos =~ /^(動詞)$/)) {
         return 1;
     }
     return 0;
