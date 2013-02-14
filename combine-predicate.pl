@@ -104,6 +104,7 @@ sub combine {
 
 while(<STDIN>) {
     chomp;
+    s/  +\// 　\//g; # Remove single spaces
     my @warr = split(/ /);
     my @harr = map { my ($w, $pr, $ps) = wpp($_); $w } @warr;
     my @carr = map { iscombine($_) } @warr;
