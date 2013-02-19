@@ -30,9 +30,8 @@ while(<STDIN>) {
     if($TRIM) { s/^ +//g; s/ +$//g; }
     tr/ａ-ｚＡ-Ｚ０-９（）［］｛｝＜＞．，＿％「」、”？・＋：。！＆＊/a-zA-Z0-9()[]{}<>.,_%｢｣､"?･+:｡!&*/;
     s/／/\//g;
-    s/－/-/g if not $NOHYPHEN;
+    if(not $NOHYPHEN) { s/－/-/g; }
     if($ZENSPACE) { s/ /　/g; }
     elsif($UNDERSPACE) { s/　/__/g; }
-    s/ /　/g if $ZENSPACE;
     print "$_\n";
 }
