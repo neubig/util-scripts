@@ -59,7 +59,7 @@ GetOptions(
 );
 
 if(@ARGV == 0) {
-    print STDERR "Usage: $0 EVAL_FILES...";
+    print STDERR "Usage: $0 EVAL_FILES...\n";
     exit 1;
 }
 
