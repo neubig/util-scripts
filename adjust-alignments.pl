@@ -50,11 +50,15 @@ sub normalize_en {
     s/\(/-lrb-/g;
     s/\)/-rrb-/g;
     s/(``|'')/"/g;
-    s/n 't/ n't/g;
+    s/\&apos;/'/g;
+    s/\&quot;/"/g;
+    s/\&lt;/</g;
+    s/\&gt;/>/g;
+    s/([a-z])n 't/$1 n't/g;
     s/–/--/g;
     s/(`)/'/g;
     s/([^\\])\//$1\\\//g;
-    return $_;
+    return lc($_);
 }
 
 sub map_en {
