@@ -56,4 +56,33 @@ sub distance {
     return ($str{$id}, $d{$id});
 }
 
+# Divide an aligned string into corresponding parts
+sub divide {
+    my ($ref, $test, $hist) = @_;
+    my @ra = split(/ /, $ref);
+    my @ta = split(/ /, $test);
+    my @ret;
+    my (@er, @et, @dr, @dt);
+    foreach my $h (split(//, $hist)) {
+        if($h eq 'e') {
+            if(@dr or @dt) {
+                push @ret, "@dr\t@dt"; @dr = (); @dt = ();
+            }
+            push @er, shift(@ra);
+            push @et, shift(@ta);
+        } else {
+            if(@er or @et) {
+                die "@er != @et" if("@er" ne "@et");
+                push @ret, "@er\t@et"; @er = (); @et = ();
+            }
+            push @dr, shift(@ra) if $h ne 'i';
+            push @dt, shift(@ta) if $h ne 'd';
+        }
+    }
+    if(@dr or @dt) { push @ret, "@dr\t@dt\n\n"; }
+    elsif(@er or @et) { push @ret, "@er\t@et\n\n"; }
+    die "non-empty ra=@ra or ta=@ta\n" if(@ra or @ta);
+    return @ret;
+}
+
 1;

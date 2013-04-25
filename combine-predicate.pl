@@ -36,11 +36,18 @@
 
 use strict;
 use warnings;
-
 use utf8;
+use Getopt::Long;
+use List::Util qw(sum min max shuffle);
 binmode STDIN, ":utf8";
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
+
+my $VERB = 0;
+GetOptions(
+"verb" => \$VERB,
+);
+
 
 my $GLUE = "";
 if (@ARGV eq 1) {
@@ -65,7 +72,9 @@ sub wpp {
 sub iscombine {
     my $s = shift;
     my ($word, $pos, $pron) = wpp($s);
-    if($pos =~ /^(語尾|助動詞)$/) {
+    if($VERB and ($pos =~ /^動詞$/)) {
+        return 1;
+    } elsif($pos =~ /^(語尾|助動詞)$/) {
         return 1;
     } elsif(($word =~ /^(て|ば)$/) and ($pos =~ /^(助詞)$/)) {
         return 1;

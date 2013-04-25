@@ -62,11 +62,11 @@ while($ref = <REF> and $test = <TEST>) {
     $sent++;
 
     my @ha = split(//, $hist);
+    for(@ha) { $scores{$_}++; }
     my ($rd, $td, $hd, $h, $r, $t, $l);
     if(not $PRINT_INLINE) {
         while(@ha) {
             $h = shift(@ha);
-            $scores{$h}++;
             if($h eq 'e' or $h eq 's') {
                 $r = shift(@ra);
                 $t = shift(@ta);
@@ -84,30 +84,13 @@ while($ref = <REF> and $test = <TEST>) {
             $hd .= pad($h, $l);
         }
         print "$rd\n$td\n$hd\n\n";
+        die "non-empty ra=@ra or ta=@ta\n" if(@ra or @ta);
     } else {
-        my (@er, @et, @dr, @dt);
-        while(@ha) {
-            $h = shift(@ha);
-            $scores{$h}++;
-            if($h eq 'e') {
-                if(@dr or @dt) {
-                    print "X\t@dr\t@dt\n"; @dr = (); @dt = ();
-                }
-                push @er, shift(@ra);
-                push @et, shift(@ta);
-            } else {
-                if(@er or @et) {
-                    die "@er != @et" if("@er" ne "@et");
-                    print "O\t@er\t@et\n"; @er = (); @et = ();
-                }
-                push @dr, shift(@ra) if $h ne 'i';
-                push @dt, shift(@ta) if $h ne 'd';
-            }
+        for(Levenshtein::divide($ref, $test, $hist)) {
+            my ($stra, $strb) = split(/\t/);
+            print (($stra eq $strb) ? "O" : "X")."\t$_\n";
         }
-        if(@dr or @dt) { print "X\t@dr\t@dt\n\n"; }
-        elsif(@er or @et) { print "O\t@er\t@et\n\n"; }
     }
-    die "non-empty ra=@ra or ta=@ta\n" if(@ra or @ta);
 }
 
 my $total = 0;

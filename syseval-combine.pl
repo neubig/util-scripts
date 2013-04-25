@@ -50,12 +50,14 @@ my $REF = "";
 my $IDS = "";
 my $MAX = 30;
 my $MIN = 1;
+my $NUM = 0;
 GetOptions(
     "ref=s" => \$REF,
     "src=s" => \$SRC,
     "ids=s" => \$IDS,
     "max=i" => \$MAX,
     "min=i" => \$MIN,
+    "num=i" => \$NUM,
 );
 
 if(@ARGV == 0) {
@@ -101,6 +103,7 @@ while(1) {
         my $val = <$hand>;
         if(not $val) {
             @lines = shuffle(@lines);
+            @lines = @lines[0 .. $NUM-1] if $NUM;
             print join("\n", map {$_->[0]} @lines)."\n";
             print $idsh join("\n", map {$_->[1]} @lines)."\n" if $idsh;
             exit;
