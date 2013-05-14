@@ -2,16 +2,20 @@
 
 use strict;
 use warnings;
-
 use utf8;
-use FileHandle;
+use Getopt::Long;
 use List::Util qw(sum min max shuffle);
 binmode STDIN, ":utf8";
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
 
+my $NOSPACE = 0;
+GetOptions(
+    "nospace" => \$NOSPACE,
+);
+
 if(@ARGV == 0) {
-    print STDERR "Usage: FILES";
+    print STDERR "Usage: FILES\n";
     exit 1;
 }
 
@@ -28,5 +32,5 @@ while(1) {
         exit if not $val;
         print $val;
     }
-    print "\n";
+    print "\n" if not $NOSPACE;
 }
