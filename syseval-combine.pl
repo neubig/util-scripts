@@ -51,6 +51,7 @@ my $IDS = "";
 my $MAX = 30;
 my $MIN = 1;
 my $NUM = 0;
+my $DUP = 0; # Allow duplicates
 GetOptions(
     "ref=s" => \$REF,
     "src=s" => \$SRC,
@@ -58,6 +59,7 @@ GetOptions(
     "max=i" => \$MAX,
     "min=i" => \$MIN,
     "num=i" => \$NUM,
+    "dup" => \$DUP,
 );
 
 if(@ARGV == 0) {
@@ -95,6 +97,7 @@ print join("\t", @title)."\n";
 
 my @lines;
 
+my %dups;
 while(1) {
     my ($ref, $src, %vals, @valarr);
     my $len = 0;
@@ -125,6 +128,6 @@ while(1) {
             push @cols, $shufvals[$i], "";
         }
         my @valarr = map { $vals{$_} } @valarr;
-        push @lines, [join("\t", @cols), join("\t", @valarr)];
+        push @lines, [join("\t", @cols), join("\t", @valarr)] if $src and not ($dups{$src}++ and not $DUP);
     }
 }

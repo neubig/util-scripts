@@ -41,6 +41,14 @@ if(@ARGV != 2) {
 open FILE0, "<:utf8", $ARGV[0] or die "Couldn't open $ARGV[0]\n";
 open FILE1, "<:utf8", $ARGV[1] or die "Couldn't open $ARGV[1]\n";
 
+my %lettermap = (
+    "S" => 5,
+    "A" => 4,
+    "B" => 3,
+    "C" => 2,
+    "D" => 1
+);
+
 my ($stsv, $sids, $lines, @scores, @tsvs, @vals, @refs, $header);
 while(($stsv = <FILE0>) and ($sids = <FILE1>)) {
     if((not $header) and ($stsv =~ /^(Source|Reference)\t/)) {
@@ -57,10 +65,12 @@ while(($stsv = <FILE0>) and ($sids = <FILE1>)) {
     if((max(@aids)+1)*2 != @atsv) { die "MISMATCHED LINES:\n$stsv\n$sids\n"; }
     foreach my $i (0 .. $#aids) {
         $scores[$i] = [] if not $scores[$i];
-        $atsv[$aids[$i]*2+1] =~ /^[0-9\.]+$/ or die "Unfinished line $stsv\n";
-        push @{$scores[$i]}, $atsv[$aids[$i]*2+1];
+        my $pos = $aids[$i]*2;
+        $atsv[$pos+1] = $lettermap{$atsv[$pos+1]} if(defined $lettermap{$atsv[$pos+1]});
+        $atsv[$pos+1] =~ /^[0-9\.]+$/ or die "Unfinished line $stsv\n";
+        push @{$scores[$i]}, $atsv[$pos+1];
         $vals[$i] = [] if not $vals[$i];
-        push @{$vals[$i]}, $atsv[$aids[$i]*2];
+        push @{$vals[$i]}, $atsv[$pos];
     }
 }
 
@@ -74,6 +84,10 @@ foreach my $i (1 .. scalar(@{$scores[0]})) {
 }
 my @avgscores = map { sum(@$_) / $lines } @scores;
 print join("\t", "Total", @avgscores)."\n";
+foreach my $lev (2 .. 5) {
+    my @levs = map { sprintf("%.2f", sum(map { ($_ >= $lev) ? 1 : 0 } @$_) * 100 / $lines) } @scores;
+    print join("\t", "$lev+", @levs)."\n";
+}
 foreach my $i (0 .. $#avgscores-1) {
     foreach my $j ($i+1 .. $#avgscores) {
         my ($w, $t, $l) = bootstrap($scores[$i], $scores[$j]);
