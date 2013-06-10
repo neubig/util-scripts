@@ -64,6 +64,7 @@ if (@ARGV eq 1) {
 #
 sub wpp {
     my $s = shift;
+    # print STDERR "$s\n";
     $s =~ /^(.+)\/([^\/]+)\/([^\/]+)$/ or die $s;
     return ($1, $2, $3);
 }
@@ -113,8 +114,9 @@ sub combine {
 
 while(<STDIN>) {
     chomp;
-    s/  +\// 　\//g; # Remove single spaces
-    my @warr = split(/ /);
+    # print "$_\n";
+    s/\\ /　/g;
+    my @warr = split(/ +/);
     my @harr = map { my ($w, $pr, $ps) = wpp($_); $w } @warr;
     my @carr = map { iscombine($_) } @warr;
     print "@{combine(\@harr, \@carr)}\n";
