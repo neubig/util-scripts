@@ -92,6 +92,10 @@ sub map_lev {
             push @oerr, $opos++ if $h ne 'd';
         }
     }
+    foreach my $i (@ierr) {
+        $ret{$i} = {};
+        foreach my $o (@oerr) { $ret{$i}->{$o}++; }
+    }
     # die "$in\n$out\n" if($in ne $out);
     return %ret;
 }
