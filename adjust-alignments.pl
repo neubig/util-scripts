@@ -14,8 +14,15 @@ binmode STDIN, ":utf8";
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
 
+my $SRC_TYPE = "lev";
+my $TRG_TYPE = "lev";
+GetOptions(
+"src-type=s" => \$SRC_TYPE,
+"trg-type=s" => \$SRC_TYPE,
+);
+
 if(@ARGV != 5) {
-    print STDERR "Usage: $0 JA_OLD EN_OLD ALIGN JA_NEW EN_NEW\n";
+    print STDERR "Usage: $0 SRC_OLD TRG_OLD ALIGN SRC_NEW TRG_NEW\n";
     exit 1;
 }
 
@@ -27,7 +34,7 @@ open FILE4, "<:utf8", $ARGV[4] or die "Couldn't open $ARGV[4]\n";
 
 my ($jo, $eo, $al, $jn, $en);
 
-sub map_ja {
+sub map_char {
     my ($in, $out) = @_;
     my @ia = split(/ /, $in);
     my @oa = split(/ /, $out);
@@ -58,10 +65,12 @@ sub normalize_en {
     s/–/--/g;
     s/(`)/'/g;
     s/([^\\])\//$1\\\//g;
+    s/[、，]/,/g;
+    s/[。．]/./g;
     return lc($_);
 }
 
-sub map_en {
+sub map_lev {
     my ($in, $out) = @_;
     $in = normalize_en($in);
     $out = normalize_en($out);
@@ -115,8 +124,8 @@ sub combine_map {
 
 while(($jo = <FILE0>) and ($eo = <FILE1>) and ($al = <FILE2>) and ($jn = <FILE3>) and ($en = <FILE4>)) {
     chomp $jo; chomp $eo; chomp $al; chomp $jn; chomp $en;
-    my %em = map_en($eo, $en);
-    my %jm = map_ja($jn, $jo);
+    my %em = ($SRC_TYPE eq "lev") ? map_lev($eo, $en) : map_char($eo, $en);
+    my %jm = ($SRC_TYPE eq "lev") ? map_lev($jn, $jo) : map_char($jn, $jo);
     my %am;
     for(split(/ /, $al)) {
         my ($ja, $ea) = split(/-/);

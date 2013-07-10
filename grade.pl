@@ -10,7 +10,9 @@ use utf8;
 use strict;
 use warnings;
 use List::Util qw(max min);
-use Cwd qw(cwd);
+use Cwd qw(cwd abs_path);
+use FindBin;
+use lib $FindBin::Bin;
 
 use Levenshtein;
 
