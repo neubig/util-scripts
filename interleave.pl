@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 use utf8;
+use IO::File;
 use Getopt::Long;
 use List::Util qw(sum min max shuffle);
 binmode STDIN, ":utf8";

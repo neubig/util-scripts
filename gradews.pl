@@ -52,7 +52,7 @@ while($ref = <REF> and $test = <TEST>) {
     $testw += @tlens;
     # print "$ref\n@rlens\n$test\n@tlens\n";
     # find word matches
-    my ($rlast, $tlast);
+    my ($rlast, $tlast) = (0, 0);
     while(@rlens and @tlens) {
         if($rlast == $tlast) {
             $corw++ if($rlens[0] == $tlens[0]);

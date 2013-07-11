@@ -116,8 +116,8 @@ while(1) {
         $vals{$val}++;
         push @valarr, $val;
     }
-    if($refh) { $ref = <$refh>; chomp $ref; $len = split(/ /, $ref); }
-    if($srch) { $src = <$srch>; chomp $src; $len = split(/ /, $src); }
+    if($refh) { $ref = <$refh>; chomp $ref; $len = scalar(split(/ /, $ref)); }
+    if($srch) { $src = <$srch>; chomp $src; $len = scalar(split(/ /, $src)); }
     if(($len <= $MAX) and ($len >= $MIN)) {
         my @cols;
         push @cols, $ref if $refh;
