@@ -54,8 +54,8 @@ sub map_char {
 
 sub normalize_en {
     $_ = shift;
-    s/\(/-lrb-/g;
-    s/\)/-rrb-/g;
+    s/[\(（]/-lrb-/g;
+    s/[\)）]/-rrb-/g;
     s/(``|'')/"/g;
     s/\&apos;/'/g;
     s/\&quot;/"/g;
@@ -74,6 +74,8 @@ sub map_lev {
     my ($in, $out) = @_;
     $in = normalize_en($in);
     $out = normalize_en($out);
+    my @ia = split(/ /, $in);
+    my @oa = split(/ /, $out);
     my ($hist, $score) = Levenshtein::distance($in, $out);
     my @hists = split(//, $hist);
     my (@ierr, @oerr);
@@ -86,6 +88,8 @@ sub map_lev {
                 $ret{$i} = {};
                 foreach my $o (@oerr) { $ret{$i}->{$o}++; }
             }
+            @ierr = ();
+            @oerr = ();
             $ret{$ipos++} = { $opos++ => 1 };
         } else {
             push @ierr, $ipos++ if $h ne 'i';
