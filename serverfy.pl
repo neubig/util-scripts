@@ -25,6 +25,7 @@ if(@ARGV != 1) {
     exit 1;
 }
 
+print STDERR "Serverfying:\n$ARGV[0]\n";
 my $pid = open2(*Reader, *Writer, $ARGV[0]) or die "Could not run $ARGV[0]\n";
 
 # 関数を追加
@@ -35,7 +36,9 @@ sub run_cmd {
     print Writer "$t\n";
     my $got = <Reader>;
     chomp $got;
-    print STDERR "OUT: $got\n";
+    my $pr = $got;
+    utf8::decode($pr);
+    print STDERR "OUT: $pr\n";
  	return $got;
 }
 
