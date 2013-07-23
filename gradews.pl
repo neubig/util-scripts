@@ -2,6 +2,11 @@
 use strict;
 use warnings;
 
+if(@ARGV != 2) {
+    print STDERR "$0 REF TEST\n";
+    exit(1);
+}
+
 sub lengths {
     my @ret;
     my @bounds = (@_,1);
@@ -19,7 +24,7 @@ open REF, "<:utf8", $ARGV[0] or die $!;
 open TEST, "<:utf8", $ARGV[1] or die $!;
 my ($ref, $test);
 my ($totb, $corb, $refw, $testw, $corw,$tots,$cors);
-while($ref = <REF> and $test = <TEST>) {
+while(defined($ref = <REF>) and defined($test = <TEST>)) {
     chomp $ref; chomp $test;
     $tots++;
     $cors++ if ($ref eq $test);
