@@ -1,6 +1,10 @@
 #!/usr/bin/perl
 
 # This is a script to grade word error rates according to edit distance
+if(@ARGV != 2) {
+    print STDERR "$0 REF TEST\n";
+    exit(1);
+}
 
 binmode STDIN, ":utf8";
 binmode STDOUT, ":utf8";
@@ -40,7 +44,7 @@ open TEST, "<:utf8", $ARGV[1];
 my ($reflen, $testlen);
 my %scores = ();
 my($ref, $test, $sent, $sentacc);
-while($ref = <REF> and $test = <TEST>) {
+while(defined($ref = <REF>) and defined($test = <TEST>)) {
     chomp $ref;
     chomp $test;
     $ref =~ s/^ *//g; $ref =~ s/ *$//g;
@@ -90,7 +94,7 @@ while($ref = <REF> and $test = <TEST>) {
     } else {
         for(Levenshtein::divide($ref, $test, $hist)) {
             my ($stra, $strb) = split(/\t/);
-            print (($stra eq $strb) ? "O" : "X")."\t$_\n";
+            print ((($stra eq $strb) ? "O" : "X")."\t$_\n");
         }
     }
 }

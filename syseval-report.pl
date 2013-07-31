@@ -15,8 +15,6 @@
 #
 # Where finished-eval is a completely filled in manual evaluation CSV file
 # and output.ids is the ID file output by syseval-combine.pl
-#
-# TODO: Add significance tests to the report
 
 use strict;
 use warnings;
@@ -50,7 +48,7 @@ my %lettermap = (
 );
 
 my ($stsv, $sids, $lines, @scores, @tsvs, @vals, @refs, $header);
-while(($stsv = <FILE0>) and ($sids = <FILE1>)) {
+while(defined($stsv = <FILE0>) and defined($sids = <FILE1>)) {
     if((not $header) and ($stsv =~ /^(Source|Reference)\t/)) {
         $header = 1; $stsv = <FILE0>;
     }

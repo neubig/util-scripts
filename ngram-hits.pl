@@ -37,7 +37,7 @@ sub count_ngrams {
 
 my %total;
 my ($s0, $s1);
-while(($s0 = <FILE0>) and ($s1 = <FILE1>)) {
+while(defined($s0 = <FILE0>) and defined($s1 = <FILE1>)) {
     chomp $s0; chomp $s1;
     my %n0 = count_ngrams($s0);
     my %n1 = count_ngrams($s1);

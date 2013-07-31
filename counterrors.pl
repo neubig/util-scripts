@@ -22,7 +22,7 @@ if(@ARGV != 2) {
 open REF, "<:utf8", $ARGV[0] or die $!;
 open TEST,    "<:utf8", $ARGV[1] or die $!;
 my ($ref, $test, @refs, @tests, %errs, @hists);
-while($ref = <REF> and $test = <TEST>) {
+while(defined($ref = <REF>) and defined($test = <TEST>)) {
     chomp $ref; chomp $test;
     my ($hist, $score) = Levenshtein::distance($ref, $test);
     @refs = split(/ +/, $ref);

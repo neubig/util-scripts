@@ -22,7 +22,7 @@ binmode STDOUT, ":utf8";
 use List::Util qw(sum min max shuffle);
 
 if(@ARGV != 2) {
-    print STDERR "Usage: error-diff.pl file1.err file2.err";
+    print STDERR "Usage: error-diff.pl file1.err file2.err\n";
     exit 1;
 }
 
