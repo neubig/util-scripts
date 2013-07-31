@@ -130,7 +130,7 @@ sub combine_map {
     return %ret;
 }
 
-while(($jo = <FILE0>) and ($eo = <FILE1>) and ($al = <FILE2>) and ($jn = <FILE3>) and ($en = <FILE4>)) {
+while(defined($jo = <FILE0>) and defined($eo = <FILE1>) and defined($al = <FILE2>) and defined($jn = <FILE3>) and defined($en = <FILE4>)) {
     chomp $jo; chomp $eo; chomp $al; chomp $jn; chomp $en;
     my %em = ($SRC_TYPE eq "lev") ? map_lev($eo, $en) : map_char($eo, $en);
     my %jm = ($SRC_TYPE eq "lev") ? map_lev($jn, $jo) : map_char($jn, $jo);
