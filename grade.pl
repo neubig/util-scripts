@@ -96,6 +96,7 @@ while(defined($ref = <REF>) and defined($test = <TEST>)) {
             my ($stra, $strb) = split(/\t/);
             print ((($stra eq $strb) ? "O" : "X")."\t$_\n");
         }
+        print "\n";
     }
 }
 
