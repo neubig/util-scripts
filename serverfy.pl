@@ -14,6 +14,7 @@ binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
 
 $RPC::XML::ENCODING = 'utf-8';
+$RPC::XML::FORCE_STRING_ENCODING = 1;
 
 my $PORT = 9002;
 GetOptions(
@@ -32,6 +33,13 @@ my $pid = open2(*Reader, *Writer, $ARGV[0]) or die "Could not run $ARGV[0]\n";
 sub run_cmd {
     my $s = shift; # サーバーオブジェクト
     my $t = shift; # txt name
+    next if not $t;
+    # Remove bad unicode and the optional <req> header
+    utf8::decode($t);
+    $t =~ tr[\x{9}\x{A}\x{D}\x{20}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}][]cd;
+    utf8::encode($t);
+    next if not $t;
+    # Send this to the processor
     print STDERR "IN: $t\n";
     print Writer "$t\n";
     my $got = <Reader>;
@@ -49,11 +57,7 @@ my $srv = RPC::XML::Server->new(port => $PORT);
 my $ls_method = RPC::XML::Procedure->new();
 
 # メソッドを追加
-$srv->add_method(
-    { name => 'process',
-      code => \&run_cmd,
-      signature => [ 'string string' ] }
-);
+$srv->add_method({ name => 'process', code => \&run_cmd, signature => [ 'string string' ] });
 
 # サーバーを立ち上げる
 $srv->server_loop;
