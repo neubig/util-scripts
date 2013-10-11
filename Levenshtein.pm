@@ -79,8 +79,8 @@ sub divide {
             push @dt, shift(@ta) if $h ne 'd';
         }
     }
-    if(@dr or @dt) { push @ret, "@dr\t@dt\n\n"; }
-    elsif(@er or @et) { push @ret, "@er\t@et\n\n"; }
+    if(@dr or @dt) { push @ret, "@dr\t@dt"; }
+    elsif(@er or @et) { push @ret, "@er\t@et"; }
     die "non-empty ra=@ra or ta=@ta\n" if(@ra or @ta);
     return @ret;
 }
