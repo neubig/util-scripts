@@ -81,7 +81,7 @@ foreach my $i (1 .. scalar(@{$scores[0]})) {
     print join("\t", @line)."\n";
 }
 my @avgscores = map { sum(@$_) / $lines } @scores;
-print join("\t", "Total", @avgscores)."\n";
+print join("\t", "Total", map { sprintf("%.2f", $_) } @avgscores)."\n";
 foreach my $lev (2 .. 5) {
     my @levs = map { sprintf("%.2f", sum(map { ($_ >= $lev) ? 1 : 0 } @$_) * 100 / $lines) } @scores;
     print join("\t", "$lev+", @levs)."\n";
