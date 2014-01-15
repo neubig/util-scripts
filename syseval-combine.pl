@@ -70,7 +70,7 @@ if(@ARGV == 0) {
 my @handles;
 my ($refh, $srch, $idsh);
 for(@ARGV) {
-   my $fh = IO::File->new("< $_") or die "didn't work for $_";
+   my $fh = IO::File->new("< $_") or die "Couldn't open $_";
    binmode $fh, ":utf8";
    push @handles, $fh;
 }
@@ -78,16 +78,16 @@ die "Must define a reference -ref or a source -src" if not $REF and not $SRC;
 my @title;
 if($REF) {
     push @title, "Reference";
-    $refh = IO::File->new("< $REF") or die "didn't work for $_";
+    $refh = IO::File->new("< $REF") or die "Couldn't open $REF";
     binmode $refh, ":utf8";
 }
 if($SRC) {
     push @title, "Source";
-    $srch = IO::File->new("< $SRC") or die "didn't work for $_";
+    $srch = IO::File->new("< $SRC") or die "Couldn't open $SRC";
     binmode $srch, ":utf8";
 }
 if($IDS) {
-    $idsh = IO::File->new("> $IDS") or die "didn't work for $_";
+    $idsh = IO::File->new("> $IDS") or die "Couldn't open $IDS";
     binmode $idsh, ":utf8";
 }
 for(0 .. $#ARGV) {
