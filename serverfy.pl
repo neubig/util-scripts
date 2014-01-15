@@ -33,12 +33,12 @@ my $pid = open2(*Reader, *Writer, $ARGV[0]) or die "Could not run $ARGV[0]\n";
 sub run_cmd {
     my $s = shift; # サーバーオブジェクト
     my $t = shift; # txt name
-    next if not $t;
+    return "" if $t =~ /^ *$/;
     # Remove bad unicode and the optional <req> header
     utf8::decode($t);
     $t =~ tr[\x{9}\x{A}\x{D}\x{20}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}][]cd;
     utf8::encode($t);
-    next if not $t;
+    return "" if $t =~ /^ *$/;
     # Send this to the processor
     print STDERR "IN: $t\n";
     print Writer "$t\n";

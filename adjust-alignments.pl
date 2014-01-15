@@ -32,8 +32,6 @@ open FILE2, "<:utf8", $ARGV[2] or die "Couldn't open $ARGV[2]\n";
 open FILE3, "<:utf8", $ARGV[3] or die "Couldn't open $ARGV[3]\n";
 open FILE4, "<:utf8", $ARGV[4] or die "Couldn't open $ARGV[4]\n";
 
-my ($jo, $eo, $al, $jn, $en);
-
 sub map_char {
     my ($in, $out) = @_;
     my @ia = split(/ /, $in);
@@ -130,6 +128,8 @@ sub combine_map {
     return %ret;
 }
 
+
+my ($jo, $eo, $al, $jn, $en);
 while(defined($jo = <FILE0>) and defined($eo = <FILE1>) and defined($al = <FILE2>) and defined($jn = <FILE3>) and defined($en = <FILE4>)) {
     chomp $jo; chomp $eo; chomp $al; chomp $jn; chomp $en;
     my %em = ($SRC_TYPE eq "lev") ? map_lev($eo, $en) : map_char($eo, $en);
