@@ -42,8 +42,8 @@ open REF, "<:utf8", $ARGV[0];
 open TEST, "<:utf8", $ARGV[1];
 
 my ($reflen, $testlen);
-my %scores = ();
-my($ref, $test, $sent, $sentacc);
+my %scores = qw(s 0 i 0 d 0 e 0);
+my($ref, $test, $sent, $sentacc) = (0, 0, 0, 0);
 while(defined($ref = <REF>) and defined($test = <TEST>)) {
     chomp $ref;
     chomp $test;

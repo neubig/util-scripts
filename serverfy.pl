@@ -17,8 +17,10 @@ $RPC::XML::ENCODING = 'utf-8';
 $RPC::XML::FORCE_STRING_ENCODING = 1;
 
 my $PORT = 9002;
+my $TIMEOUT = 20;
 GetOptions(
 "port=s" => \$PORT,
+"timeout=s" => \$TIMEOUT,
 );
 
 if(@ARGV != 1) {
@@ -33,7 +35,6 @@ my $pid = open2(*Reader, *Writer, $ARGV[0]) or die "Could not run $ARGV[0]\n";
 sub run_cmd {
     my $s = shift; # サーバーオブジェクト
     my $t = shift; # txt name
-    return "" if $t =~ /^ *$/;
     # Remove bad unicode and the optional <req> header
     utf8::decode($t);
     $t =~ tr[\x{9}\x{A}\x{D}\x{20}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}][]cd;
@@ -42,8 +43,20 @@ sub run_cmd {
     # Send this to the processor
     print STDERR "IN: $t\n";
     print Writer "$t\n";
-    my $got = <Reader>;
-    chomp $got;
+    my $got;
+    eval {
+        local $SIG{ALRM} = sub { die "ALARUM" };
+        alarm($TIMEOUT);
+        chomp($got = <Reader>);
+        alarm(0);
+    };
+    if ($@ =~ /ALARUM/) { 
+        close Writer or die $!;
+        close Reader or die $!;
+        waitpid($pid, 0);
+        $pid = open2(*Reader, *Writer, $ARGV[0]) or die "Could not run $ARGV[0]\n";
+        return "__FAILURE__: Timeout of $TIMEOUT seconds reached, restarting.";
+    }
     my $pr = $got;
     utf8::decode($pr);
     print STDERR "OUT: $pr\n";
