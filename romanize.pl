@@ -167,7 +167,7 @@ sub romanize {
         die "romanize(string): should be UTF-8 flagged string";
     }
 
-    $string =~ tr/ア-ン/あ-ん/;
+    $string =~ tr/ァ-ン/ぁ-ん/;
 
     my $output;
     my $last_hepburn;
