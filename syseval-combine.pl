@@ -48,7 +48,7 @@ binmode STDERR, ":utf8";
 my $SRC = "";
 my $REF = "";
 my $IDS = "";
-my $MAX = 30;
+my $MAX = 999;
 my $MIN = 1;
 my $NUM = 0;
 my $DUP = 0; # Allow duplicates
