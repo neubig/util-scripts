@@ -41,10 +41,12 @@ open FILE1, "<:utf8", $ARGV[1] or die "Couldn't open $ARGV[1]\n";
 
 my %lettermap = (
     "S" => 5,
+    "AA" => 5,
     "A" => 4,
     "B" => 3,
     "C" => 2,
-    "D" => 1
+    "D" => 1,
+    "F" => 1
 );
 
 my ($stsv, $sids, $lines, @scores, @tsvs, @vals, @refs, $header);
@@ -52,15 +54,17 @@ while(defined($stsv = <FILE0>) and defined($sids = <FILE1>)) {
     if((not $header) and ($stsv =~ /^(Source|Reference)\t/)) {
         $header = 1; $stsv = <FILE0>;
     }
+    next if($stsv =~ /\tX\t/ or $stsv =~ /\tX$/);
     ++$lines;
     last if ($LINES != -1) and ($lines > $LINES);
     chomp $stsv; chomp $sids;
     push @tsvs, $stsv;
+    $stsv =~ s/[\t ]+$//g;
     my @atsv = split(/\t/, $stsv);
     my @aids = split(/\t/, $sids);
     $refs[$lines-1] = shift(@atsv);
     $refs[$lines-1] .= "\t".shift(@atsv) if(@atsv % 2 == 1);
-    if((max(@aids)+1)*2 != @atsv) { die "MISMATCHED LINES:\n$stsv\n$sids\n"; }
+    if((max(@aids)+1)*2 != @atsv) { die "MISMATCHED LINES: ". (max(@aids)+1)*2 ." != ".scalar(@atsv)."\n$stsv\n$sids\n"; }
     foreach my $i (0 .. $#aids) {
         $scores[$i] = [] if not $scores[$i];
         my $pos = $aids[$i]*2;

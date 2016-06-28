@@ -59,8 +59,8 @@ sub distance {
 # Divide an aligned string into corresponding parts
 sub divide {
     my ($ref, $test, $hist) = @_;
-    my @ra = split(/ /, $ref);
-    my @ta = split(/ /, $test);
+    my @ra = split(/ +/, $ref);
+    my @ta = split(/ +/, $test);
     my @ret;
     my (@er, @et, @dr, @dt);
     foreach my $h (split(//, $hist)) {

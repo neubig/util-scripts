@@ -48,6 +48,7 @@ binmode STDERR, ":utf8";
 my $SRC = "";
 my $REF = "";
 my $IDS = "";
+my $EM = "";   # If an exact match, output this
 my $MAX = 999;
 my $MIN = 1;
 my $NUM = 0;
@@ -56,6 +57,7 @@ GetOptions(
     "ref=s" => \$REF,
     "src=s" => \$SRC,
     "ids=s" => \$IDS,
+    "em=s" => \$EM,
     "max=i" => \$MAX,
     "min=i" => \$MIN,
     "num=i" => \$NUM,
@@ -116,8 +118,8 @@ while(1) {
         $vals{$val}++;
         push @valarr, $val;
     }
-    if($refh) { $ref = <$refh>; chomp $ref; $len = scalar(split(/ /, $ref)); }
-    if($srch) { $src = <$srch>; chomp $src; $len = scalar(split(/ /, $src)); }
+    if($refh) { $ref = <$refh>; chomp $ref; $ref =~ s/ +$//g; $len = scalar(split(/ /, $ref)); }
+    if($srch) { $src = <$srch>; chomp $src; $src =~ s/ +$//g; $len = scalar(split(/ /, $src)); }
     if(($len <= $MAX) and ($len >= $MIN)) {
         my @cols;
         push @cols, $ref if $refh;
@@ -125,7 +127,7 @@ while(1) {
         my @shufvals = shuffle(keys %vals);
         foreach my $i (0 .. $#shufvals) {
             $vals{$shufvals[$i]} = $i;
-            push @cols, $shufvals[$i], "";
+            push @cols, $shufvals[$i], ((defined($ref) and ($shufvals[$i] eq $ref)) ? $EM : "");
         }
         my @valarr = map { $vals{$_} } @valarr;
         push @lines, [join("\t", @cols), join("\t", @valarr)] if $src and not ($dups{$src}++ and not $DUP);

@@ -135,6 +135,7 @@ while(defined($jo = <FILE0>) and defined($eo = <FILE1>) and defined($al = <FILE2
     my %em = ($SRC_TYPE eq "lev") ? map_lev($eo, $en) : map_char($eo, $en);
     my %jm = ($SRC_TYPE eq "lev") ? map_lev($jn, $jo) : map_char($jn, $jo);
     my %am;
+    s/ +$//g;
     for(split(/ /, $al)) {
         my ($ja, $ea) = split(/-/);
         $am{$ja} = {} if not $am{$ja};
