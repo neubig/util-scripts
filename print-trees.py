@@ -16,7 +16,7 @@ except ImportError:
 
 def main():
   for line in sys.stdin:
-    t = Tree.parse(line)
+    t = Tree.fromstring(line)
     t.draw()
 
 if __name__ == '__main__':
