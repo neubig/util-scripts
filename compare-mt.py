@@ -6,12 +6,12 @@ from collections import defaultdict
 parser = argparse.ArgumentParser(
     description='Program to compare MT results',
 )
-parser.add_argument('ref', type=str)
-parser.add_argument('out', type=str)
-parser.add_argument('otherout', nargs='?', type=str, default=None)
-parser.add_argument('--alpha', type=float, default=1.0)
-parser.add_argument('--ngram', type=int, default=4)
-parser.add_argument('--printsize', type=int, default=50)
+parser.add_argument('ref', type=str, help='A path to a correct reference file')
+parser.add_argument('out', type=str, help='A path to a system output')
+parser.add_argument('otherout', nargs='?', type=str, default=None, help='A path to another system output. Add only if you want to compare outputs from two systems.')
+parser.add_argument('--alpha', type=float, default=1.0, help='A smoothing coefficient to control how much the model focuses on low- and high-frequency events. 1.0 should be fine most of the time.')
+parser.add_argument('--ngram', type=int, default=4, help='Maximum length of n-grams.')
+parser.add_argument('--printsize', type=int, default=50, help='How many n-grams to print.')
 args = parser.parse_args()
 
 with open(args.ref, "r") as f:
