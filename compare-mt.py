@@ -19,7 +19,7 @@ with open(args.ref, "r") as f:
 with open(args.out, "r") as f:
   out = [line.strip().split() for line in f]
 if args.otherout != None:
-  with args.otherout as f:
+  with open(args.otherout, "r") as f:
     out2 = [line.strip().split() for line in f]
 
 def calc_ngrams(sent):
@@ -30,14 +30,15 @@ def calc_ngrams(sent):
   return ret
 
 def match_ngrams(left, right):
-  ret = {}
+  ret = defaultdict(lambda: 0)
   for k, v in left.items():
-    if k in right.items():
+    if k in right:
       ret[k] = min(v, right[k])
   return ret
 
 # Analyze the reference/output
 if args.otherout == None:
+  # Create n-grams
   refall = defaultdict(lambda: 0)
   outall = defaultdict(lambda: 0)
   for refsent, outsent in zip(ref, out):
@@ -45,6 +46,7 @@ if args.otherout == None:
       refall[k] += v
     for k, v in calc_ngrams(outsent).items():
       outall[k] += v
+  # Calculate scores
   scores = {}
   for k, v in refall.items():
     scores[k] = (v + args.alpha) / (v + outall[k] + 2*args.alpha)
@@ -52,13 +54,40 @@ if args.otherout == None:
     scores[k] = (refall[k] + args.alpha) / (refall[k] + v + 2*args.alpha)
   scorelist = sorted(scores.items(), key=operator.itemgetter(1))
   # Print the ouput
-  print('--- %d n-grams over-generated n-grams indicative of output' % args.printsize)
+  print('--- %d over-generated n-grams indicative of output' % args.printsize)
   for k, v in scorelist[:args.printsize]:
     print('%s\t%f (ref=%d, out=%d)' % (' '.join(k), v, refall[k], outall[k]))
   print()
-  print('--- %d n-grams under-generated n-grams indicative of reference' % args.printsize)
+  print('--- %d under-generated n-grams indicative of reference' % args.printsize)
   for k, v in reversed(scorelist[-args.printsize:]):
     print('%s\t%f (ref=%d, out=%d)' % (' '.join(k), v, refall[k], outall[k]))
 # Analyze the differences between two systems
 else:
-  raise NotImplementedError('Comparison between two systems is not implemented yet')
+  # Create n-grams
+  outall = defaultdict(lambda: 0)
+  out2all = defaultdict(lambda: 0)
+  for refsent, outsent, out2sent in zip(ref, out, out2):
+    refn = calc_ngrams(refsent)
+    outmatch = match_ngrams(refn, calc_ngrams(outsent))
+    out2match = match_ngrams(refn, calc_ngrams(out2sent))
+    for k, v in outmatch.items():
+      if v > out2match[k]:
+        outall[k] += v - out2match[k]
+    for k, v in out2match.items():
+      if v > outmatch[k]:
+        out2all[k] += v - outmatch[k]
+  # Calculate scores
+  scores = {}
+  for k, v in out2all.items():
+    scores[k] = (v + args.alpha) / (v + outall[k] + 2*args.alpha)
+  for k, v in outall.items():
+    scores[k] = (out2all[k] + args.alpha) / (out2all[k] + v + 2*args.alpha)
+  scorelist = sorted(scores.items(), key=operator.itemgetter(1))
+  # Print the ouput
+  print('--- %d n-grams that System 1 did a better job of producing' % args.printsize)
+  for k, v in scorelist[:args.printsize]:
+    print('%s\t%f (sys1=%d, sys2=%d)' % (' '.join(k), v, outall[k], out2all[k]))
+  print()
+  print('--- %d n-grams that System 2 did a better job of producing' % args.printsize)
+  for k, v in reversed(scorelist[-args.printsize:]):
+    print('%s\t%f (sys1=%d, sys2=%d)' % (' '.join(k), v, outall[k], out2all[k]))  
