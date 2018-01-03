@@ -1,6 +1,7 @@
 import sys
 import argparse
 import operator
+import itertools
 from collections import defaultdict
 
 parser = argparse.ArgumentParser(
@@ -85,13 +86,13 @@ freq_counts = defaultdict(lambda: 0)
 if args.train_counts != None:
   with open(args.train_counts, "r") as f:
     for line in f:
-      word, freq = line.strip.split('\t')
+      word, freq = line.strip().split('\t')
       freq_counts[word] = freq
 else:
   my_file = args.train_file if args.train_file != None else args.ref_file
-  with open(args.train_counts, "r") as f:
+  with open(my_file, "r") as f:
     for line in f:
-      for word in line.strip.split():
+      for word in line.strip().split():
         freq_counts[word] += 1 
 
 def calc_matches_by_freq(ref, out, buckets):
@@ -103,7 +104,7 @@ def calc_matches_by_freq(ref, out, buckets):
       reffreq[x] += 1
     for x in outsent:
       outfreq[x] += 1
-    for k in set(reffreq.keys(), outfreq.keys()):
+    for k in set(itertools.chain(reffreq.keys(), outfreq.keys())):
       for bucket, match in zip(extended_buckets, matches):
         if freq_counts[k] < bucket:
           match[0] += min(reffreq[k], outfreq[k])
@@ -111,9 +112,12 @@ def calc_matches_by_freq(ref, out, buckets):
           match[2] += outfreq[k]
           break 
   for bothf, reff, outf in matches:
-    rec = bothf / float(reff)
-    prec = bothf / float(outf)
-    fmeas = 0 if bothf == 0 else 2 * prec * rec / (prec + rec)
+    if bothf == 0:
+      rec, prec, fmeas = 0.0, 0.0, 0.0
+    else:
+      rec = bothf / float(reff)
+      prec = bothf / float(outf)
+      fmeas = 2 * prec * rec / (prec + rec)
     yield bothf, reff, outf, rec, prec, fmeas
 
 buckets = [1, 2, 3, 4, 5, 10, 100, 1000]
@@ -143,7 +147,7 @@ if args.out2_file == None:
   matches = calc_matches_by_freq(ref, out, buckets)
   print('--- word f-measure by frequency bucket')
   for bucket_str, match in zip(bucket_strs, matches):
-    print("{}\t{}".format(bucket_str, match[5]))
+    print("{}\t{:.4f}".format(bucket_str, match[5]))
 # Analyze the differences between two systems
 else:
   outall, out2all, scores = calc_compare(ref, out, out2, args.alpha)
@@ -160,5 +164,5 @@ else:
   matches = calc_matches_by_freq(ref, out, buckets)
   matches2 = calc_matches_by_freq(ref, out2, buckets)
   print('--- word f-measure by frequency bucket')
-  for bucket_str, match2 in zip(bucket_strs, matches, matches2):
-    print("{}\t{}\t{}".format(bucket_str, match[5], match2[5]))
+  for bucket_str, match, match2 in zip(bucket_strs, matches, matches2):
+    print("{}\t{:.4f}\t{:.4f}".format(bucket_str, match[5], match2[5]))
