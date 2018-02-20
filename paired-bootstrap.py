@@ -96,9 +96,9 @@ def eval_with_paired_bootstrap(gold, sys1, sys2,
   # Print win stats
   wins = [x/float(num_samples) for x in wins]
   print('Win ratio: sys1=%.3f, sys2=%.3f, tie=%.3f' % (wins[0], wins[1], wins[2]))
-  if sys1 > sys2:
+  if wins[0] > wins[1]:
     print('(sys1 is superior with p value p=%.3f)\n' % (1-wins[0]))
-  elif sys2 > sys1:
+  elif wins[1] > wins[0]:
     print('(sys2 is superior with p value p=%.3f)\n' % (1-wins[1]))
 
   # Print system stats
