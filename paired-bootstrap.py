@@ -105,9 +105,9 @@ def eval_with_paired_bootstrap(gold, sys1, sys2,
   sys1_scores.sort()
   sys2_scores.sort()
   print('sys1 mean=%.3f, median=%.3f, 95%% confidence interval=[%.3f, %.3f]' %
-          (np.mean(sys1_scores), np.median(sys1_scores), sys1_scores[int(n * 0.025)], sys1_scores[int(n * 0.975)]))
+          (np.mean(sys1_scores), np.median(sys1_scores), sys1_scores[int(num_samples * 0.025)], sys1_scores[int(num_samples * 0.975)]))
   print('sys2 mean=%.3f, median=%.3f, 95%% confidence interval=[%.3f, %.3f]' %
-          (np.mean(sys2_scores), np.median(sys2_scores), sys2_scores[int(n * 0.025)], sys2_scores[int(n * 0.975)]))
+          (np.mean(sys2_scores), np.median(sys2_scores), sys2_scores[int(num_samples * 0.025)], sys2_scores[int(num_samples * 0.975)]))
 
 if __name__ == "__main__":
   # execute only if run as a script
