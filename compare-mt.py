@@ -2,6 +2,7 @@ import sys
 import argparse
 import operator
 import itertools
+import nltk
 from collections import defaultdict
 
 parser = argparse.ArgumentParser(
@@ -14,7 +15,8 @@ parser.add_argument('--train_file', type=str, default=None, help='A link to the 
 parser.add_argument('--train_counts', type=str, default=None, help='A link to the training word frequency counts as a tab-separated "word\\tfreq" file')
 parser.add_argument('--alpha', type=float, default=1.0, help='A smoothing coefficient to control how much the model focuses on low- and high-frequency events. 1.0 should be fine most of the time.')
 parser.add_argument('--ngram', type=int, default=4, help='Maximum length of n-grams.')
-parser.add_argument('--printsize', type=int, default=50, help='How many n-grams to print.')
+parser.add_argument('--ngram_size', type=int, default=50, help='How many n-grams to print.')
+parser.add_argument('--sent_size', type=int, default=10, help='How many sentences to print.')
 args = parser.parse_args()
 
 with open(args.ref_file, "r") as f:
@@ -136,12 +138,12 @@ if args.out2_file == None:
   refall, outall, scores = calc_over_under(ref, out, args.alpha)
   scorelist = sorted(scores.items(), key=operator.itemgetter(1))
   # Print the ouput
-  print('--- %d over-generated n-grams indicative of output' % args.printsize)
-  for k, v in scorelist[:args.printsize]:
+  print('--- %d over-generated n-grams indicative of output' % args.ngram_size)
+  for k, v in scorelist[:args.ngram_size]:
     print('%s\t%f (ref=%d, out=%d)' % (' '.join(k), v, refall[k], outall[k]))
   print()
-  print('--- %d under-generated n-grams indicative of reference' % args.printsize)
-  for k, v in reversed(scorelist[-args.printsize:]):
+  print('--- %d under-generated n-grams indicative of reference' % args.ngram_size)
+  for k, v in reversed(scorelist[-args.ngram_size:]):
     print('%s\t%f (ref=%d, out=%d)' % (' '.join(k), v, refall[k], outall[k]))
   # Calculate f-measure
   matches = calc_matches_by_freq(ref, out, buckets)
@@ -153,12 +155,12 @@ else:
   outall, out2all, scores = calc_compare(ref, out, out2, args.alpha)
   scorelist = sorted(scores.items(), key=operator.itemgetter(1))
   # Print the ouput
-  print('--- %d n-grams that System 1 did a better job of producing' % args.printsize)
-  for k, v in scorelist[:args.printsize]:
+  print('--- %d n-grams that System 1 did a better job of producing' % args.ngram_size)
+  for k, v in scorelist[:args.ngram_size]:
     print('%s\t%f (sys1=%d, sys2=%d)' % (' '.join(k), v, outall[k], out2all[k]))
   print()
-  print('--- %d n-grams that System 2 did a better job of producing' % args.printsize)
-  for k, v in reversed(scorelist[-args.printsize:]):
+  print('--- %d n-grams that System 2 did a better job of producing' % args.ngram_size)
+  for k, v in reversed(scorelist[-args.ngram_size:]):
     print('%s\t%f (sys1=%d, sys2=%d)' % (' '.join(k), v, outall[k], out2all[k]))  
   # Calculate f-measure
   matches = calc_matches_by_freq(ref, out, buckets)
@@ -166,3 +168,16 @@ else:
   print('--- word f-measure by frequency bucket')
   for bucket_str, match, match2 in zip(bucket_strs, matches, matches2):
     print("{}\t{:.4f}\t{:.4f}".format(bucket_str, match[5], match2[5]))
+  # Calculate BLEU diff
+  scorediff_list = []
+  for i, (o1, o2, r) in enumerate(zip(out, out2, ref)):
+    b1 = nltk.translate.sentence_bleu([r], o1, smoothing_function=nltk.translate.chencherry.method2)
+    b2 = nltk.translate.sentence_bleu([r], o2, smoothing_function=nltk.translate.chencherry.method2)
+    scorediff_list.append((b2-b1, b1, b2, i))
+  scorediff_list.sort()
+  print('--- %d sentences that System 1 did a better job at than System 2' % args.sent_size)
+  for bdiff, b1, b2, i in scorediff_list[:args.sent_size]:
+    print ('BLEU+1 sys2-sys1={}, sys1={}, sys2={}\n{}\n{}'.format(bdiff, b1, b2, out[i], out2[i]))
+  print('--- %d sentences that System 2 did a better job at than System 1' % args.sent_size)
+  for bdiff, b1, b2, i in scorediff_list[-args.sent_size:]:
+    print ('BLEU+1 sys2-sys1={}, sys1={}, sys2={}\n{}\n{}'.format(bdiff, b1, b2, out[i], out2[i]))
