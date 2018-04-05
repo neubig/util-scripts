@@ -170,14 +170,15 @@ else:
     print("{}\t{:.4f}\t{:.4f}".format(bucket_str, match[5], match2[5]))
   # Calculate BLEU diff
   scorediff_list = []
+  chencherry = nltk.translate.bleu_score.SmoothingFunction()
   for i, (o1, o2, r) in enumerate(zip(out, out2, ref)):
-    b1 = nltk.translate.sentence_bleu([r], o1, smoothing_function=nltk.translate.chencherry.method2)
-    b2 = nltk.translate.sentence_bleu([r], o2, smoothing_function=nltk.translate.chencherry.method2)
+    b1 = nltk.translate.bleu_score.sentence_bleu([r], o1, smoothing_function=chencherry.method2)
+    b2 = nltk.translate.bleu_score.sentence_bleu([r], o2, smoothing_function=chencherry.method2)
     scorediff_list.append((b2-b1, b1, b2, i))
   scorediff_list.sort()
   print('--- %d sentences that System 1 did a better job at than System 2' % args.sent_size)
   for bdiff, b1, b2, i in scorediff_list[:args.sent_size]:
-    print ('BLEU+1 sys2-sys1={}, sys1={}, sys2={}\n{}\n{}'.format(bdiff, b1, b2, out[i], out2[i]))
+    print ('BLEU+1 sys2-sys1={}, sys1={}, sys2={}\nRef:  {}\nSys1: {}\nSys2: {}\n'.format(bdiff, b1, b2, ' '.join(ref[i]), ' '.join(out[i]), ' '.join(out2[i])))
   print('--- %d sentences that System 2 did a better job at than System 1' % args.sent_size)
   for bdiff, b1, b2, i in scorediff_list[-args.sent_size:]:
-    print ('BLEU+1 sys2-sys1={}, sys1={}, sys2={}\n{}\n{}'.format(bdiff, b1, b2, out[i], out2[i]))
+    print ('BLEU+1 sys2-sys1={}, sys1={}, sys2={}\nRef:  {}\nSys1: {}\nSys2: {}\n'.format(bdiff, b1, b2, ' '.join(ref[i]), ' '.join(out[i]), ' '.join(out2[i])))
