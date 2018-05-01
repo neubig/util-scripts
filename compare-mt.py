@@ -138,6 +138,7 @@ if args.out2_file == None:
   refall, outall, scores = calc_over_under(ref, out, args.alpha)
   scorelist = sorted(scores.items(), key=operator.itemgetter(1))
   # Print the ouput
+  print('********************** N-gram Difference Analysis ************************')
   print('--- %d over-generated n-grams indicative of output' % args.ngram_size)
   for k, v in scorelist[:args.ngram_size]:
     print('%s\t%f (ref=%d, out=%d)' % (' '.join(k), v, refall[k], outall[k]))
@@ -147,6 +148,7 @@ if args.out2_file == None:
     print('%s\t%f (ref=%d, out=%d)' % (' '.join(k), v, refall[k], outall[k]))
   # Calculate f-measure
   matches = calc_matches_by_freq(ref, out, buckets)
+  print('\n\n********************** Word Frequency Analysis ************************')
   print('--- word f-measure by frequency bucket')
   for bucket_str, match in zip(bucket_strs, matches):
     print("{}\t{:.4f}".format(bucket_str, match[5]))
@@ -155,16 +157,17 @@ else:
   outall, out2all, scores = calc_compare(ref, out, out2, args.alpha)
   scorelist = sorted(scores.items(), key=operator.itemgetter(1))
   # Print the ouput
+  print('********************** N-gram Difference Analysis ************************')
   print('--- %d n-grams that System 1 did a better job of producing' % args.ngram_size)
   for k, v in scorelist[:args.ngram_size]:
     print('%s\t%f (sys1=%d, sys2=%d)' % (' '.join(k), v, outall[k], out2all[k]))
-  print()
-  print('--- %d n-grams that System 2 did a better job of producing' % args.ngram_size)
+  print('\n--- %d n-grams that System 2 did a better job of producing' % args.ngram_size)
   for k, v in reversed(scorelist[-args.ngram_size:]):
     print('%s\t%f (sys1=%d, sys2=%d)' % (' '.join(k), v, outall[k], out2all[k]))  
   # Calculate f-measure
   matches = calc_matches_by_freq(ref, out, buckets)
   matches2 = calc_matches_by_freq(ref, out2, buckets)
+  print('\n\n********************** Word Frequency Analysis ************************')
   print('--- word f-measure by frequency bucket')
   for bucket_str, match, match2 in zip(bucket_strs, matches, matches2):
     print("{}\t{:.4f}\t{:.4f}".format(bucket_str, match[5], match2[5]))
@@ -176,6 +179,17 @@ else:
     b2 = nltk.translate.bleu_score.sentence_bleu([r], o2, smoothing_function=chencherry.method2)
     scorediff_list.append((b2-b1, b1, b2, i))
   scorediff_list.sort()
+  print('\n\n********************** Length Analysis ************************')
+  length_diff = {}
+  length_diff2 = {}
+  for r, o, o2 in zip(ref, out, out2):
+    ld = len(o)-len(r)
+    ld2 = len(o2)-len(r)
+    length_diff[ld] = length_diff.get(ld,0) + 1
+    length_diff2[ld2] = length_diff2.get(ld2,0) + 1
+  for ld in sorted(list(set(length_diff.keys()) | set(length_diff2.keys()))):
+    print("{}\t{}\t{}".format(ld, length_diff.get(ld,0), length_diff2.get(ld,0)))
+  print('\n\n********************** BLEU Analysis ************************')
   print('--- %d sentences that System 1 did a better job at than System 2' % args.sent_size)
   for bdiff, b1, b2, i in scorediff_list[:args.sent_size]:
     print ('BLEU+1 sys2-sys1={}, sys1={}, sys2={}\nRef:  {}\nSys1: {}\nSys2: {}\n'.format(bdiff, b1, b2, ' '.join(ref[i]), ' '.join(out[i]), ' '.join(out2[i])))
