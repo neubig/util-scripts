@@ -180,6 +180,12 @@ else:
     scorediff_list.append((b2-b1, b1, b2, i))
   scorediff_list.sort()
   print('\n\n********************** Length Analysis ************************')
+  print('--- length ratio')
+  length_ref = sum([len(x) for x in ref])
+  length_out = sum([len(x) for x in out])
+  length_out2 = sum([len(x) for x in out2])
+  print('System 1: {}, System 2: {}'.format(length_out/length_ref, length_out2/length_ref))
+  print('--- length difference from reference by bucket')
   length_diff = {}
   length_diff2 = {}
   for r, o, o2 in zip(ref, out, out2):
