@@ -9,9 +9,9 @@ import sys
 try:
   from nltk.tree import Tree
 except ImportError:
-  print 'Error: cannot import the NLTK!'
-  print 'You need to install the NLTK. Please visit http://nltk.org/install.html for details.'
-  print "On Ubuntu, the installation can be done via 'sudo apt-get install python-nltk'"
+  print('Error: cannot import the NLTK!')
+  print('You need to install the NLTK. Please visit http://nltk.org/install.html for details.')
+  print("On Ubuntu, the installation can be done via 'sudo apt-get install python-nltk'")
   sys.exit()
 
 def main():
