@@ -1,3 +1,6 @@
+# NOTE: The master version of this script has moved and can be found here:
+#       https://github.com/neulab/compare-mt
+
 import sys
 import argparse
 import operator
