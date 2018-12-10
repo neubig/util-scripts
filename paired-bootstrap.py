@@ -117,8 +117,8 @@ if __name__ == "__main__":
   parser.add_argument('gold', help='File of the correct answers')
   parser.add_argument('sys1', help='File of the answers for system 1')
   parser.add_argument('sys2', help='File of the answers for system 2')
-  parser.add_argument('--eval_type', help='The evaluation type (acc/pearson/bleu)', default='acc')
-  parser.add_argument('--num_samples', help='Number of samples to use', default=10000)
+  parser.add_argument('--eval_type', help='The evaluation type (acc/pearson/bleu)', type=str, default='acc')
+  parser.add_argument('--num_samples', help='Number of samples to use', type=int, default=10000)
   args = parser.parse_args()
   
   with open(args.gold, 'r') as f:
