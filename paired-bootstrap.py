@@ -39,7 +39,8 @@ def eval_measure(gold, sys, eval_type='acc'):
     return sum([1 if g == s else 0 for g, s in zip(gold, sys)]) / float(len(gold))
   elif eval_type == 'bleu':
     import nltk
-    return nltk.translate.bleu_score(gold, sys)
+    gold_wrap = [[x] for x in gold]
+    return nltk.translate.bleu_score.corpus_bleu(gold_wrap, sys)
   elif eval_type == 'pearson':
     return np.corrcoef([gold, sys])[0,1]
   else:
