@@ -1,6 +1,7 @@
 ######################################################################
 # Compare two systems using bootstrap resampling                     #
-#  by Graham Neubig                                                  #
+#  * by Graham Neubig                                                #
+#  * minor modifications by Mathias Müller                           #
 #                                                                    #
 # See, e.g. the following paper for references                       #
 #                                                                    #
@@ -12,13 +13,25 @@
 
 import numpy as np
 
+
+EVAL_TYPE_ACC = "acc"
+EVAL_TYPE_BLEU = "bleu"
+EVAL_TYPE_BLEU_DETOK = "bleu_detok"
+EVAL_TYPE_PEARSON = "pearson"
+
+EVAL_TYPES = [EVAL_TYPE_ACC,
+              EVAL_TYPE_BLEU,
+              EVAL_TYPE_BLEU_DETOK,
+              EVAL_TYPE_PEARSON]
+
+
 def eval_preproc(data, eval_type='acc'):
   ''' Preprocess into the appropriate format for a particular evaluation type '''
   if type(data) == str:
     data = data.strip()
-    if eval_type == 'bleu':
+    if eval_type == EVAL_TYPE_BLEU:
       data = data.split()
-    elif eval_type == 'pearson':
+    elif eval_type == EVAL_TYPE_PEARSON:
       data = float(data)
   return data
 
@@ -28,21 +41,26 @@ def eval_measure(gold, sys, eval_type='acc'):
   This takes in gold labels and system outputs and evaluates their
   accuracy. It currently supports:
   * Accuracy (acc), percentage of labels that match
-  * Pearson's correlation coefficeint (pearson)
+  * Pearson's correlation coefficient (pearson)
   * BLEU score (bleu)
+  * BLEU_detok, on detokenized references and translations, with internal tokenization
 
   :param gold: the correct labels
   :param sys: the system outputs
-  :param eval_type: The type of evaluation to do (acc, pearson, bleu)
+  :param eval_type: The type of evaluation to do (acc, pearson, bleu, bleu_detok)
   '''
-  if eval_type == 'acc':
+  if eval_type == EVAL_TYPE_ACC:
     return sum([1 if g == s else 0 for g, s in zip(gold, sys)]) / float(len(gold))
-  elif eval_type == 'bleu':
+  elif eval_type == EVAL_TYPE_BLEU:
     import nltk
     gold_wrap = [[x] for x in gold]
     return nltk.translate.bleu_score.corpus_bleu(gold_wrap, sys)
-  elif eval_type == 'pearson':
+  elif eval_type == EVAL_TYPE_PEARSON:
     return np.corrcoef([gold, sys])[0,1]
+  elif eval_type == EVAL_TYPE_BLEU_DETOK:
+    import sacrebleu
+    # make sure score is 0-based instead of 100-based
+    return sacrebleu.corpus_bleu(sys, [gold]).score / 100.
   else:
     raise NotImplementedError('Unknown eval type in eval_measure: %s' % eval_type)
 
@@ -51,7 +69,7 @@ def eval_with_paired_bootstrap(gold, sys1, sys2,
                                eval_type='acc'):
   ''' Evaluate with paired boostrap
 
-  This compares two systems, performing a signifiance tests with
+  This compares two systems, performing a significance tests with
   paired bootstrap resampling to compare the accuracy of the two systems.
   
   :param gold: The correct labels
@@ -59,7 +77,7 @@ def eval_with_paired_bootstrap(gold, sys1, sys2,
   :param sys2: The output of system 2
   :param num_samples: The number of bootstrap samples to take
   :param sample_ratio: The ratio of samples to take every time
-  :param eval_type: The type of evaluation to do (acc, pearson, bleu)
+  :param eval_type: The type of evaluation to do (acc, pearson, bleu, bleu_detok)
   '''
   assert(len(gold) == len(sys1))
   assert(len(gold) == len(sys2))
@@ -117,7 +135,7 @@ if __name__ == "__main__":
   parser.add_argument('gold', help='File of the correct answers')
   parser.add_argument('sys1', help='File of the answers for system 1')
   parser.add_argument('sys2', help='File of the answers for system 2')
-  parser.add_argument('--eval_type', help='The evaluation type (acc/pearson/bleu)', type=str, default='acc')
+  parser.add_argument('--eval_type', help='The evaluation type (acc/pearson/bleu/bleu_detok)', type=str, default='acc', choices=EVAL_TYPES)
   parser.add_argument('--num_samples', help='Number of samples to use', type=int, default=10000)
   args = parser.parse_args()
   
