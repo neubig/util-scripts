@@ -59,7 +59,8 @@ def eval_measure(gold, sys, eval_type='acc'):
     return np.corrcoef([gold, sys])[0,1]
   elif eval_type == EVAL_TYPE_BLEU_DETOK:
     import sacrebleu
-    return sacrebleu.corpus_bleu(sys, [gold]).score
+    # make sure score is 0-based instead of 100-based
+    return sacrebleu.corpus_bleu(sys, [gold]).score / 100.
   else:
     raise NotImplementedError('Unknown eval type in eval_measure: %s' % eval_type)
 
