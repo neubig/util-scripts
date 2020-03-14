@@ -105,7 +105,7 @@ def eval_with_paired_bootstrap(gold, sys1, sys2,
     sys2_score = eval_measure(reduced_gold, reduced_sys2, eval_type=eval_type)
     if sys1_score > sys2_score:
       wins[0] += 1
-    if sys1_score < sys2_score:
+    elif sys1_score < sys2_score:
       wins[1] += 1
     else:
       wins[2] += 1
