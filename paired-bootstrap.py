@@ -77,8 +77,7 @@ def eval_with_paired_bootstrap(gold, sys1, sys2,
 
   for _ in range(num_samples):
     # Subsample the gold and system outputs
-    np.random.shuffle(ids)
-    reduced_ids = ids[:int(len(ids)*sample_ratio)]
+    reduced_ids = np.random.choice(ids,int(len(ids)*sample_ratio),replace=True)
     reduced_gold = [gold[i] for i in reduced_ids]
     reduced_sys1 = [sys1[i] for i in reduced_ids]
     reduced_sys2 = [sys2[i] for i in reduced_ids]
