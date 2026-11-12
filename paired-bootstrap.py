@@ -65,7 +65,7 @@ def eval_measure(gold, sys, eval_type='acc'):
     raise NotImplementedError('Unknown eval type in eval_measure: %s' % eval_type)
 
 def eval_with_paired_bootstrap(gold, sys1, sys2,
-                               num_samples=10000, sample_ratio=0.5,
+                               num_samples=10000, sample_ratio=1.0,
                                eval_type='acc'):
   ''' Evaluate with paired boostrap
 
